@@ -1,3 +1,5 @@
+
+// determinar transiciones entre estados
 function getTransition(state, input) {
     const transitionTable = {
         q0: {
@@ -61,7 +63,7 @@ function getTransition(state, input) {
     return transitionTable[state][input];
 }
 
-function isFinalState(state) {
+function isFinalState(state) { // se verifica si el estadoactual es final 
     return document.getElementById(state + '-FDC').value === 'SI';
 }
 
@@ -69,17 +71,17 @@ function validateString() {
     let currentState = 'q0';  // estado inicial
     const inputString = document.getElementById('inputString').value;
     let lastState = currentState;
+    let stateSequence = [currentState];  // Array para almacenar la secuencia de estados
     
     for (let i = 0; i < inputString.length; i++) {
         let char = inputString[i];
         
         if (/[0-9]/.test(char)) {
-            char = 'digit';  // Considera cualquier dígito como digit
+            char = 'digit';  // Considera cualquier dígito como 'digit'
         }
     
-        
         if (isFinalState(currentState) && char === inputString[i - 1]) {
-            continue; // se mantiene el estado si el simbolo es igual al anterior
+            continue; // se mantiene el estado si el símbolo es igual al anterior
         }
 
         lastState = currentState;
@@ -87,11 +89,50 @@ function validateString() {
 
         if (!currentState) {
             document.getElementById('result').textContent = "Cadena inválida.";
+            document.getElementById('result').classList.remove("valid");
+            document.getElementById('result').classList.add("invalid");
             return;
         }
+
+        stateSequence.push(currentState);  // Agrega el estado actual a la secuencia
     }
 
-    // Verificar si el estado final es de aceptación
+    // verificar si el estado final es de aceptación
     const isValid = isFinalState(currentState) || (isFinalState(lastState) && inputString[inputString.length - 1] === inputString[inputString.length - 2]);
-    document.getElementById('result').textContent = isValid ? "Cadena válida." : "Cadena inválida.";
+    
+    const resultElement = document.getElementById('result');
+    if (isValid) {
+        resultElement.textContent = `Cadena válida. Secuencia de estados: ${stateSequence.join('-')}`;
+        resultElement.classList.remove("invalid");
+        resultElement.classList.add("valid");
+    } else {
+        resultElement.textContent = `Cadena inválida. Secuencia de estados: ${stateSequence.join('-')}`;
+        resultElement.classList.remove("valid");
+        resultElement.classList.add("invalid");
+    }
 }
+
+
+// Hacer que las columnas de la tabla sean redimensionables
+document.querySelectorAll("th").forEach(function(th) {
+    th.classList.add("resizable");
+
+    th.addEventListener("mousedown", function(event) {
+        if (event.offsetX > th.offsetWidth - 10) {  // Solo si se hace clic cerca del borde derecho
+            let startX = event.pageX;
+            let startWidth = th.offsetWidth;
+
+            function onMouseMove(event) {
+                th.style.width = startWidth + (event.pageX - startX) + "px";
+            }
+
+            function onMouseUp() {
+                document.removeEventListener("mousemove", onMouseMove);
+                document.removeEventListener("mouseup", onMouseUp);
+            }
+
+            document.addEventListener("mousemove", onMouseMove);
+            document.addEventListener("mouseup", onMouseUp);
+        }
+    });
+});

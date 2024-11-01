@@ -13,6 +13,16 @@
             padding: 20px;
         }
 
+        .valid {
+    color: green;
+    font-weight: bold;
+}
+
+.invalid {
+    color: red;
+    font-weight: bold;
+}
+
         h1 {
             color: #ffff00; /* Título en amarillo */
             text-align: center;
@@ -37,6 +47,21 @@
             text-align: center;
             color: #ffff00;  /* Texto amarillo */
         }
+
+        /* Estilo para el borde de redimensionamiento */
+th {
+    position: relative;
+}
+
+th.resizable::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    cursor: col-resize;
+}
 
         th {
             background-color: #333333;  /* Fondo más oscuro para el encabezado */
@@ -82,7 +107,7 @@
             font-size: 18px;
             font-weight: bold;
             margin-top: 20px;
-            color: #ffff00;
+            
         }
     </style>
 </head>
